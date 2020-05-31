@@ -1,11 +1,10 @@
 from os.path import abspath
 from os.path import dirname
-from os.path import isdir
 from os.path import join
 
 import pytest
 
-from pyro_graph_nets.utils.tensorboard import new_writer as new_summary_writer
+from archived.pyro_graph_nets.utils.tensorboard import new_writer as new_summary_writer
 
 runs = join(abspath(dirname(__file__)), "..", ".runs")
 

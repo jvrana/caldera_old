@@ -5,9 +5,9 @@ import numpy as np
 import pytest
 import torch
 
-from pyro_graph_nets.utils.data import random_input_output_graphs
-from pyro_graph_nets.utils.graph_tuple import to_graph_tuple
-from pyro_graph_nets.utils.graph_tuple import validate_gt
+from archived.pyro_graph_nets.utils import random_input_output_graphs
+from archived.pyro_graph_nets.utils import to_graph_tuple
+from archived.pyro_graph_nets.utils import validate_gt
 
 
 def graph_generator(

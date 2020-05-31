@@ -1,14 +1,12 @@
 from functools import wraps
 from typing import Dict
 from typing import List
-from typing import Tuple
-from typing import Type
 
 import torch
 import torch_scatter
 from torch import nn
 
-from pyro_graph_nets.utils import pairwise
+from archived.pyro_graph_nets.utils import pairwise
 
 # TODO: rename arguments to v, e, u
 # TODO: incoporate aggregation of global attributes

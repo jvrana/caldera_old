@@ -1,5 +1,3 @@
-from typing import Any
-from typing import Dict
 from typing import Tuple
 
 import numpy as np
@@ -7,23 +5,23 @@ import pytest
 import torch
 from flaky import flaky
 
-from pyro_graph_nets.blocks import Aggregator
-from pyro_graph_nets.blocks import EdgeBlock
-from pyro_graph_nets.blocks import GlobalBlock
-from pyro_graph_nets.blocks import MLP
-from pyro_graph_nets.blocks import NodeBlock
-from pyro_graph_nets.flex import Flex
-from pyro_graph_nets.flex import FlexBlock
-from pyro_graph_nets.flex import FlexDim
-from pyro_graph_nets.models import GraphEncoder
-from pyro_graph_nets.models import GraphNetwork
-from pyro_graph_nets.utils.data import GraphDataLoader
-from pyro_graph_nets.utils.data import GraphDataset
-from pyro_graph_nets.utils.data import random_input_output_graphs
-from pyro_graph_nets.utils.graph_tuple import cat_gt
-from pyro_graph_nets.utils.graph_tuple import print_graph_tuple_shape
-from pyro_graph_nets.utils.graph_tuple import to_graph_tuple
-from pyro_graph_nets.utils.graph_tuple import validate_gt
+from archived.pyro_graph_nets import Aggregator
+from archived.pyro_graph_nets import EdgeBlock
+from archived.pyro_graph_nets import GlobalBlock
+from archived.pyro_graph_nets import MLP
+from archived.pyro_graph_nets import NodeBlock
+from archived.pyro_graph_nets import Flex
+from archived.pyro_graph_nets import FlexBlock
+from archived.pyro_graph_nets import FlexDim
+from archived.pyro_graph_nets import GraphEncoder
+from archived.pyro_graph_nets import GraphNetwork
+from archived.pyro_graph_nets.utils import GraphDataLoader
+from archived.pyro_graph_nets.utils import GraphDataset
+from archived.pyro_graph_nets.utils import random_input_output_graphs
+from archived.pyro_graph_nets.utils import cat_gt
+from archived.pyro_graph_nets.utils import print_graph_tuple_shape
+from archived.pyro_graph_nets.utils import to_graph_tuple
+from archived.pyro_graph_nets.utils import validate_gt
 
 
 class TestFlexBlock:
