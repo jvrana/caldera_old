@@ -1,4 +1,3 @@
-import time
 from typing import Tuple
 
 import networkx as nx
@@ -6,20 +5,18 @@ import numpy as np
 import pytest
 from flaky import flaky
 
-from pyro_graph_nets.blocks import Aggregator
-from pyro_graph_nets.blocks import EdgeBlock
-from pyro_graph_nets.blocks import GlobalBlock
-from pyro_graph_nets.blocks import MLP
-from pyro_graph_nets.blocks import NodeBlock
-from pyro_graph_nets.models import GraphEncoder
-from pyro_graph_nets.models import GraphNetwork
-from pyro_graph_nets.utils.data import add_features
-from pyro_graph_nets.utils.data import GraphDataLoader
-from pyro_graph_nets.utils.data import GraphDataset
-from pyro_graph_nets.utils.data import random_graph_generator
-from pyro_graph_nets.utils.data import random_input_output_graphs
-from pyro_graph_nets.utils.graph_tuple import GraphTuple
-from pyro_graph_nets.utils.graph_tuple import to_graph_tuple
+from archived.pyro_graph_nets import Aggregator
+from archived.pyro_graph_nets import EdgeBlock
+from archived.pyro_graph_nets import GlobalBlock
+from archived.pyro_graph_nets import MLP
+from archived.pyro_graph_nets import NodeBlock
+from archived.pyro_graph_nets import GraphEncoder
+from archived.pyro_graph_nets import GraphNetwork
+from archived.pyro_graph_nets.utils import GraphDataLoader
+from archived.pyro_graph_nets.utils import GraphDataset
+from archived.pyro_graph_nets.utils import random_input_output_graphs
+from archived.pyro_graph_nets.utils import GraphTuple
+from archived.pyro_graph_nets.utils import to_graph_tuple
 
 
 def graph_generator(

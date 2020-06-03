@@ -1,13 +1,10 @@
-from functools import partial
-
 import torch
 from torch import nn
 
-from pyro_graph_nets.blocks import EdgeBlock
-from pyro_graph_nets.blocks import GlobalBlock
-from pyro_graph_nets.blocks import NodeBlock
-from pyro_graph_nets.utils.graph_tuple import GraphTuple
-from pyro_graph_nets.utils.graph_tuple import replace_key
+from archived.pyro_graph_nets import EdgeBlock
+from archived.pyro_graph_nets import GlobalBlock
+from archived.pyro_graph_nets import NodeBlock
+from archived.pyro_graph_nets.utils import replace_key
 
 
 def gt_wrap_replace(func):

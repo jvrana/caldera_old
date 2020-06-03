@@ -9,8 +9,8 @@ import networkx as nx
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 
-from pyro_graph_nets.utils.graph_tuple import GraphTuple
-from pyro_graph_nets.utils.graph_tuple import to_graph_tuple
+from archived.pyro_graph_nets.utils import GraphTuple
+from archived.pyro_graph_nets.utils import to_graph_tuple
 
 
 GraphType = Union[nx.DiGraph, nx.Graph]

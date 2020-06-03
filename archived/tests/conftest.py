@@ -4,9 +4,9 @@ from os.path import join
 
 import pytest
 
-from pyrographnets.utils.tensorboard import new_writer as new_summary_writer
+from archived.pyro_graph_nets.utils.tensorboard import new_writer as new_summary_writer
 
-runs = join(abspath(dirname(__file__)), "pytest_runs")
+runs = join(abspath(dirname(__file__)), "..", ".runs")
 
 
 @pytest.fixture(scope="module")
