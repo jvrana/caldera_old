@@ -1,8 +1,4 @@
-from typing import List
-
-from torch import nn
-
-from pyrographnets.utils import pairwise
+import torch
 from pyrographnets.data import GraphBatch
 from pyrographnets.models import GraphEncoder, GraphCore
 from pyrographnets.blocks import (
@@ -16,51 +12,15 @@ from pyrographnets.blocks import (
 )
 from pyrographnets.blocks import Flex
 from pyrographnets.blocks import MLP
-
-import torch
-
-
-class MLPBlock(nn.Module):
-    """A multilayer perceptron block."""
-
-    def __init__(self, input_size: int, output_size: int = None, dropout: float = None):
-        super().__init__()
-        if output_size is None:
-            output_size = input_size
-        args = [
-            nn.Linear(input_size, output_size), nn.ReLU(), nn.LayerNorm(output_size)
-        ]
-        if dropout:
-            args.append(nn.Dropout(dropout))
-        self.blocks = nn.Sequential(*args)
-
-    def forward(self, x):
-        return self.blocks(x)
-
-
-class MLP(nn.Module):
-    """A multilayer perceptron."""
-
-    def __init__(self, *latent_sizes: List[int], dropout: float=None):
-        super().__init__()
-        if dropout:
-            self.blocks = nn.Sequential(
-                *[MLPBlock(n1, n2, dropout) for n1, n2 in pairwise(latent_sizes)]
-            )
-        else:
-            self.blocks = nn.Sequential(
-                *[MLPBlock(n1, n2) for n1, n2 in pairwise(latent_sizes)]
-            )
-
-    def forward(self, x):
-        return self.blocks(x)
-
+from functools import partial
 
 class Network(torch.nn.Module):
     def __init__(
         self,
         latent_sizes=(128, 128, 1),
+        output_sizes=(1, 1, 1),
         depths=(1, 1, 1),
+        layer_norm: bool = True,
         dropout: float = None,
         pass_global_to_edge: bool = True,
         pass_global_to_node: bool = True,
@@ -75,16 +35,25 @@ class Network(torch.nn.Module):
                 "core_edge_block_depth": depths[1],
                 "core_global_block_depth": depths[2],
             },
+            "output_size": {
+                "edge": output_sizes[0],
+                "node": output_sizes[1],
+                "global": output_sizes[2],
+            },
             "node_block_aggregator": "add",
             "global_block_to_node_aggregator": "add",
             "global_block_to_edge_aggregator": "add",
             "pass_global_to_edge": pass_global_to_edge,
             "pass_global_to_node": pass_global_to_node,
         }
+
+        def mlp(*layer_sizes):
+            return Flex(MLP)(Flex.d(), *layer_sizes, layer_norm=layer_norm, dropout=dropout)
+
         self.encoder = GraphEncoder(
-            EdgeBlock(Flex(MLP)(Flex.d(), latent_sizes[0], dropout=dropout)),
-            NodeBlock(Flex(MLP)(Flex.d(), latent_sizes[1], dropout=dropout)),
-            GlobalBlock(Flex(MLP)(Flex.d(), latent_sizes[2], dropout=dropout)),
+            EdgeBlock(mlp(latent_sizes[0])),
+            NodeBlock(mlp(latent_sizes[1])),
+            GlobalBlock(mlp(latent_sizes[2])),
         )
 
         edge_layers = [self.config["latent_size"]["edge"]] * self.config["latent_size"][
@@ -99,20 +68,14 @@ class Network(torch.nn.Module):
 
         self.core = GraphCore(
             AggregatingEdgeBlock(
-                torch.nn.Sequential(
-                    Flex(MLP)(Flex.d(), *edge_layers, dropout=dropout),
-                    #                 torch.nn.Linear(latent_sizes[0], latent_sizes[0])
-                )
+                mlp(*edge_layers)
             ),
             AggregatingNodeBlock(
-                torch.nn.Sequential(
-                    Flex(MLP)(Flex.d(), *node_layers, dropout=dropout),
-                    #                 torch.nn.Linear(latent_sizes[1], latent_sizes[1])
-                ),
+                mlp(*node_layers),
                 Aggregator(self.config["node_block_aggregator"]),
             ),
             AggregatingGlobalBlock(
-                Flex(MLP)(Flex.d(), *global_layers, dropout=dropout),
+                mlp(*global_layers),
                 edge_aggregator=Aggregator(
                     self.config["global_block_to_edge_aggregator"]
                 ),
@@ -125,15 +88,15 @@ class Network(torch.nn.Module):
         )
 
         self.decoder = GraphEncoder(
-            EdgeBlock(Flex(MLP)(Flex.d(), latent_sizes[0], latent_sizes[0], dropout=dropout)),
-            NodeBlock(Flex(MLP)(Flex.d(), latent_sizes[1], latent_sizes[1], dropout=dropout)),
-            GlobalBlock(Flex(MLP)(Flex.d(), latent_sizes[2])),
+            EdgeBlock(mlp(latent_sizes[0])),
+            NodeBlock(mlp(latent_sizes[1])),
+            GlobalBlock(mlp(latent_sizes[2])),
         )
 
         self.output_transform = GraphEncoder(
-            EdgeBlock(Flex(torch.nn.Linear)(Flex.d(), 1)),
-            NodeBlock(Flex(torch.nn.Linear)(Flex.d(), 1)),
-            GlobalBlock(Flex(torch.nn.Linear)(Flex.d(), 1)),
+            EdgeBlock(Flex(torch.nn.Linear)(Flex.d(), output_sizes[0])),
+            NodeBlock(Flex(torch.nn.Linear)(Flex.d(), output_sizes[1])),
+            GlobalBlock(Flex(torch.nn.Linear)(Flex.d(), output_sizes[2])),
         )
 
     def forward(self, data, steps):

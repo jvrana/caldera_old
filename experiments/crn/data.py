@@ -77,9 +77,9 @@ class CircuitGenerator(object):
         return self.functions[self.func_name]
 
     def random_params(self, num):
-        A = np.random.uniform(19, 20, size=(num))
-        K = np.random.uniform(1, 2, size=(num))
-        n = np.random.uniform(1.9, 2, size=(num))
+        A = np.random.uniform(1, 20, size=(num))
+        K = np.random.uniform(1, 20, size=(num))
+        n = np.random.uniform(1, 2, size=(num))
         o = np.random.uniform(0, A.max() / 10., size=(num))
 
         A = np.expand_dims(A, 1)
