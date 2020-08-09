@@ -1,0 +1,58 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.9.4
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.7.7
+batch_size:
+  desc: null
+  value: 512
+dev_size:
+  desc: null
+  value: 2000
+epochs:
+  desc: null
+  value: 20
+eval_processing_steps:
+  desc: null
+  value: 5
+latent_depth_0:
+  desc: null
+  value: 3
+latent_depth_1:
+  desc: null
+  value: 3
+latent_depth_2:
+  desc: null
+  value: 3
+latent_size_0:
+  desc: null
+  value: 254
+latent_size_1:
+  desc: null
+  value: 254
+latent_size_2:
+  desc: null
+  value: 128
+learning_rate:
+  desc: null
+  value: 0.001
+pass_global_to_edge:
+  desc: null
+  value: true
+pass_global_to_node:
+  desc: null
+  value: true
+processing_steps:
+  desc: null
+  value: 5
+train_size:
+  desc: null
+  value: 10000
+weight_decay:
+  desc: null
+  value: 0.0001
