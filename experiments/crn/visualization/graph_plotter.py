@@ -20,11 +20,10 @@ def sorted_center(iterable, reverse=False, key=None, select=None):
 
 
 class GraphPlotter(object):
-
     def __init__(self, graph, ax=None, pos=None):
         if ax is None:
             ax = plt.figure(figsize=(3, 3)).gca()
-            ax.axis('off')
+            ax.axis("off")
             ax.set_xlim(0, 1.0)
             ax.set_ylim(0, 1.0)
 
@@ -51,9 +50,7 @@ class GraphPlotter(object):
 
         new_xlim = (xlim[0] + xspacer, xlim[1] - xspacer)
         new_ylim = (ylim[0] + yspacer, ylim[1] - yspacer)
-        pos = self._topological_sort(self._graph,
-                                     xlim=new_xlim,
-                                     ylim=new_ylim)
+        pos = self._topological_sort(self._graph, xlim=new_xlim, ylim=new_ylim)
         self._pos = pos
 
     @staticmethod
@@ -115,10 +112,12 @@ class GraphPlotter(object):
 
         # center nodes with highest degree
         for depth, nodes in by_depth.items():
-            centered = sorted_center(list(G.degree(nodes)),
-                                     key=lambda x: x[1],
-                                     reverse=True,
-                                     select=lambda x: x[0])
+            centered = sorted_center(
+                list(G.degree(nodes)),
+                key=lambda x: x[1],
+                reverse=True,
+                select=lambda x: x[0],
+            )
             by_depth[depth] = centered
 
         # push roots 'up' so they are not stuck on layer one
@@ -185,11 +184,15 @@ class GraphPlotter(object):
         return attrs
 
     def map_edge_attrs(self, attrs, source, target):
-        vals = [self._normalize(self.edge_attrs()[attr], source, target) for attr in attrs]
+        vals = [
+            self._normalize(self.edge_attrs()[attr], source, target) for attr in attrs
+        ]
         return dict(zip(attrs, vals))
 
     def map_node_attrs(self, attrs, source, target):
-        vals = [self._normalize(self.node_attrs()[attr], source, target) for attr in attrs]
+        vals = [
+            self._normalize(self.node_attrs()[attr], source, target) for attr in attrs
+        ]
         return dict(zip(attrs, vals))
 
     def _normalize(arr, source, target):
@@ -215,25 +218,31 @@ class GraphPlotter(object):
 
     def draw_nodes(self, **kwargs):
         """Useful kwargs: nodelist, node_size, node_color, linewidths."""
-        if ("node_color" in kwargs and
-                isinstance(kwargs["node_color"], collections.Sequence) and
-                len(kwargs["node_color"]) in {3, 4} and
-                not isinstance(kwargs["node_color"][0],
-                               (collections.Sequence, np.ndarray))):
+        if (
+            "node_color" in kwargs
+            and isinstance(kwargs["node_color"], collections.Sequence)
+            and len(kwargs["node_color"]) in {3, 4}
+            and not isinstance(
+                kwargs["node_color"][0], (collections.Sequence, np.ndarray)
+            )
+        ):
             num_nodes = len(kwargs.get("nodelist", self.nodes))
             kwargs["node_color"] = np.tile(
-                np.array(kwargs["node_color"])[None], [num_nodes, 1])
+                np.array(kwargs["node_color"])[None], [num_nodes, 1]
+            )
         return self._draw(nx.draw_networkx_nodes, **kwargs)
 
     def draw_edges(self, **kwargs):
         """Useful kwargs: edgelist, width."""
         return self._draw(nx.draw_networkx_edges, **kwargs)
 
-    def draw_graph(self,
-                   node_size=200,
-                   node_color=(0.4, 0.8, 0.4),
-                   node_linewidth=1.0,
-                   edge_width=1.0):
+    def draw_graph(
+        self,
+        node_size=200,
+        node_color=(0.4, 0.8, 0.4),
+        node_linewidth=1.0,
+        edge_width=1.0,
+    ):
 
         node_border_color = (0.0, 0.0, 0.0, 1.0)
 
@@ -244,7 +253,8 @@ class GraphPlotter(object):
             node_color=node_color,
             linewidths=node_linewidth,
             edgecolors=node_border_color,
-            zorder=20)
+            zorder=20,
+        )
         # Plot edges.
         self.draw_edges(edgelist=self.edges, width=edge_width, zorder=10)
 
@@ -253,10 +263,10 @@ g = nx.balanced_tree(2, 2)
 g = nx.to_directed(g)
 
 for e in g.edges:
-    g.edges[e[0], e[1]]['weight'] = 1
+    g.edges[e[0], e[1]]["weight"] = 1
 
 ax = plt.figure(figsize=(3, 3)).gca()
-ax.axis('off')
+ax.axis("off")
 ax.set_xlim(0, 1.0)
 ax.set_ylim(0, 1.0)
 

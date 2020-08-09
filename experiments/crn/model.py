@@ -28,7 +28,9 @@ class MLPBlock(nn.Module):
         if output_size is None:
             output_size = input_size
         args = [
-            nn.Linear(input_size, output_size), nn.ReLU(), nn.LayerNorm(output_size)
+            nn.Linear(input_size, output_size),
+            nn.ReLU(),
+            nn.LayerNorm(output_size),
         ]
         if dropout:
             args.append(nn.Dropout(dropout))
@@ -41,7 +43,7 @@ class MLPBlock(nn.Module):
 class MLP(nn.Module):
     """A multilayer perceptron."""
 
-    def __init__(self, *latent_sizes: List[int], dropout: float=None):
+    def __init__(self, *latent_sizes: List[int], dropout: float = None):
         super().__init__()
         if dropout:
             self.blocks = nn.Sequential(
@@ -125,8 +127,12 @@ class Network(torch.nn.Module):
         )
 
         self.decoder = GraphEncoder(
-            EdgeBlock(Flex(MLP)(Flex.d(), latent_sizes[0], latent_sizes[0], dropout=dropout)),
-            NodeBlock(Flex(MLP)(Flex.d(), latent_sizes[1], latent_sizes[1], dropout=dropout)),
+            EdgeBlock(
+                Flex(MLP)(Flex.d(), latent_sizes[0], latent_sizes[0], dropout=dropout)
+            ),
+            NodeBlock(
+                Flex(MLP)(Flex.d(), latent_sizes[1], latent_sizes[1], dropout=dropout)
+            ),
             GlobalBlock(Flex(MLP)(Flex.d(), latent_sizes[2])),
         )
 
