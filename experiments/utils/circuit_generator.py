@@ -6,7 +6,6 @@ from functools import partial
 from typing import Tuple, Hashable, List
 import itertools
 
-
 def has_cycle(g: nx.DiGraph) -> bool:
     try:
         nx.find_cycle(g)
@@ -23,8 +22,7 @@ def to_one_hot(arr: torch.tensor, mx: int):
 
 
 def sigmoid(x, a, kd, n, offset, inv):
-    return a - (a) / (1.0 + np.exp((-x + kd) * n * inv)) + offset
-
+    return a - (a) / (1. + np.exp((-x + kd) * n * inv)) + offset
 
 # class Augment:
 #     @staticmethod
@@ -35,14 +33,15 @@ def sigmoid(x, a, kd, n, offset, inv):
 #                 g.add_edge(n1, n2, features=torch.tensor([0.]), target=torch.tensor([0.]))
 #         return g
 
-
 class CircuitGenerator(object):
 
-    functions = {"sigmoid": sigmoid}
+    functions = {
+        'sigmoid': sigmoid
+    }
 
     def __init__(self, n_parts: int):
         self.n_parts = n_parts
-        self.func_name = "sigmoid"
+        self.func_name = 'sigmoid'
         assert self.func_name in self.functions
         params, labels = self.random_params(self.n_parts)
         self.params = params
@@ -56,7 +55,7 @@ class CircuitGenerator(object):
         A = np.random.uniform(1, 20, size=(num))
         K = np.random.uniform(1, 20, size=(num))
         n = np.random.uniform(1, 2, size=(num))
-        o = np.random.uniform(0, A.max() / 10.0, size=(num))
+        o = np.random.uniform(0, A.max() / 10., size=(num))
 
         A = np.expand_dims(A, 1)
         K = np.expand_dims(K, 1)
@@ -68,11 +67,13 @@ class CircuitGenerator(object):
 
         # [n_parts, n_params]
         params = np.hstack([A, K, n, o, i])
-        labels = np.array(["A", "K", "n", "o", "i"])
+        labels = np.array(['A', 'K', 'n', 'o', 'i'])
         return params, labels
 
-    def steady_state(self, g, acc="sum", node_to_part=lambda x: int(x)):
-        acc_dict = {"sum": lambda x: np.sum(np.concatenate(x))}
+    def steady_state(self, g, acc='sum', node_to_part=lambda x: int(x)):
+        acc_dict = {
+            'sum': lambda x: np.sum(np.concatenate(x))
+        }
 
         # in topological order, we evaluate the sigmoid function at each node
         for node in nx.topological_sort(g):
@@ -82,12 +83,12 @@ class CircuitGenerator(object):
             # accumulate outputs 'y' using the provided accumulation function
             parents = list(g.predecessors(node))
             if not parents:
-                p = np.expand_dims(self.params[idx : idx + 1].T, 2)
-                x = np.array([[0.0]])
+                p = np.expand_dims(self.params[idx:idx + 1].T, 2)
+                x = np.array([[0.]])
             else:
                 a = []
                 for p in parents:
-                    _x = g.nodes[p]["y"]
+                    _x = g.nodes[p]['y']
                     a.append(_x)
                 if len(a) and len(a[0]):
                     x = acc_dict[acc](a)
@@ -95,12 +96,10 @@ class CircuitGenerator(object):
                 else:
                     x = torch.tensor([], dtype=torch.float)
             y = self._partial_func(self.func_name, x, idx)
-            g.nodes[node]["y"] = y
+            g.nodes[node]['y'] = y
 
     def _partial_func(self, fname, x, node: Hashable):
-        return self.functions[fname](
-            x, *tuple(np.expand_dims(self.params[node : node + 1].T, 2))
-        )
+        return self.functions[fname](x, *tuple(np.expand_dims(self.params[node:node + 1].T, 2)))
 
     def annotate_graph_with_features(self, g: nx.DiGraph, include_target: bool = True):
         # one-hot encode the graph nodes
@@ -110,29 +109,27 @@ class CircuitGenerator(object):
         for n, data in g.nodes(data=True):
             new_g.add_node(n, **data)
         for n1, n2, edata in g.edges(data=True):
-            edata["features"] = np.array([0.0])
+            edata['features'] = np.array([0.])
             if include_target:
-                edata["target"] = np.array([1.0])
+                edata['target'] = np.array([1.])
             new_g.add_edge(n1, n2, **edata)
         if include_target:
             self.steady_state(new_g, node_to_part=lambda x: x[-1])
         for n, ndata in new_g.nodes(data=True):
             # convert this to ONE HOT!
-            ndata["features"] = one_hot_encoded[list(n)[-1]]
+            ndata['features'] = one_hot_encoded[list(n)[-1]]
             if include_target:
-                ndata["target"] = torch.tensor(
-                    [ndata["y"].flatten()], dtype=torch.float
-                )
-        new_g.data = {"features": torch.tensor([0])}
+                ndata['target'] = torch.tensor([ndata['y'].flatten()], dtype=torch.float)
+        new_g.data = {
+            'features': torch.tensor([0])
+        }
         if include_target:
-            new_g.data["target"] = torch.tensor([0])
+            new_g.data['target'] = torch.tensor([0])
 
         return new_g
 
     @staticmethod
-    def graph_from_nodes(
-        nodes: List[Tuple[Hashable, Hashable, Hashable]]
-    ) -> nx.DiGraph:
+    def graph_from_nodes(nodes: List[Tuple[Hashable, Hashable, Hashable]]) -> nx.DiGraph:
         g = nx.DiGraph()
         for n1, n2 in permutations(nodes, r=2):
             if n1[-1] in (n2[0], n2[1]):
@@ -145,13 +142,7 @@ class CircuitGenerator(object):
         g = self.graph_from_nodes(nodes)
         return g
 
-    def iter_random_circuit(
-        self,
-        limit: int,
-        part_range: Tuple[int, int],
-        cycles: bool = True,
-        annotate: bool = False,
-    ) -> nx.DiGraph:
+    def iter_random_circuit(self, limit: int, part_range: Tuple[int, int], cycles: bool = True, annotate: bool = False) -> nx.DiGraph:
         new_circuit = partial(self.random_circuit, part_range=part_range)
         for i in range(limit):
             c = new_circuit()

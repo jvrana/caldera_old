@@ -3,13 +3,11 @@ import numpy
 import torch
 import pytest
 
-
 @pytest.fixture(autouse=True)
 def set_random_seed():
     random.seed(0)
     numpy.random.seed(0)
     torch.manual_seed(0)
-
 
 from os.path import join, dirname, abspath
 from pylab import plt

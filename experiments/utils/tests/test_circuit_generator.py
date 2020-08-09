@@ -6,17 +6,15 @@ import random
 import torch
 
 
-@pytest.mark.parametrize("n", range(2, 30, 3))
+@pytest.mark.parametrize('n', range(2, 30, 3))
 def test_init(n):
     generator = CircuitGenerator(n)
 
 
-@pytest.mark.parametrize("n", range(2, 30, 3))
+@pytest.mark.parametrize('n', range(2, 30, 3))
 def test_random_circuit(n):
     generator = CircuitGenerator(n)
-    circuit_generator = generator.iter_random_circuit(
-        100, (1, n), annotate=True, cycles=False
-    )
+    circuit_generator = generator.iter_random_circuit(100, (1, n), annotate=True, cycles=False)
     for c in circuit_generator:
         pass
 
@@ -31,3 +29,5 @@ def test_plot_parts():
 
     plt.plot(x.T, y.T)
     plt.show()
+
+
