@@ -4,7 +4,7 @@ import torch
 from itertools import permutations
 from functools import partial
 from typing import Tuple, Hashable, List
-import itertools
+from pyrographnets.data import GraphBatch, GraphDataLoader
 
 
 def has_cycle(g: nx.DiGraph) -> bool:
@@ -23,7 +23,7 @@ def to_one_hot(arr: torch.tensor, mx: int):
 
 
 def sigmoid(x, a, kd, n, offset, inv):
-    return a - (a) / (1.0 + np.exp((-x + kd) * n * inv)) + offset
+    return a - a / (1.0 + np.exp((-x + kd) * n * inv)) + offset
 
 
 # class Augment:
@@ -35,7 +35,9 @@ def sigmoid(x, a, kd, n, offset, inv):
 #                 g.add_edge(n1, n2, features=torch.tensor([0.]), target=torch.tensor([0.]))
 #         return g
 
-
+# TODO: record data generation parameters
+# TODO: record actual parameters
+# TODO: record actual data
 class CircuitGenerator(object):
 
     functions = {"sigmoid": sigmoid}
@@ -47,6 +49,28 @@ class CircuitGenerator(object):
         params, labels = self.random_params(self.n_parts)
         self.params = params
         self.param_labels = params
+
+    #         self.func_params = {
+    #             'A': {
+    #                 'min': 19,
+    #                 'max': 20,
+    #                 'distribution': 'uniform'
+    #             },
+    #             'K': {
+    #                 'min': 19,
+    #                 'max': 20,
+    #                 'distribution': 'uniform'
+    #             },
+    #             'n': {
+    #                 'min': 1.9,
+    #                 'max': 2.,
+    #                 'distribution': 'uniform'
+    #             },
+    #             'o': {
+    #                 'min': 0,
+    #                 'max': 'A.max() / 10.'
+    #             }
+    #         }
 
     @property
     def func(self):
@@ -163,3 +187,66 @@ class CircuitGenerator(object):
             if annotate:
                 c = self.annotate_graph_with_features(c)
             yield c
+
+
+def split(arr, x):
+    assert x > 0 and x <= 1
+    i = int(len(arr) * x)
+    j = len(arr) - i
+    return arr[:i], arr[j:]
+
+
+# new data
+# ability to generalize larger circuits
+def generate_data(
+    generator,
+    train_size,
+    train_part_range,
+    devtest_size,
+    devtest_part_range,
+    train__train_dev_split=0.9,
+    dev_test_split=0.5,
+):
+    # training distribution
+    training_distribution = list(
+        generator.iter_random_circuit(
+            train_size, train_part_range, cycles=False, annotate=True
+        )
+    )
+    train_graphs, train_dev_graphs = split(
+        training_distribution, train__train_dev_split
+    )
+
+    # dev/test distribution
+    test_dev_distribution = list(
+        generator.iter_random_circuit(
+            devtest_size, devtest_part_range, cycles=False, annotate=True
+        )
+    )
+    dev_graphs, test_graphs = split(test_dev_distribution, dev_test_split)
+    return {
+        "train": train_graphs,
+        "train/dev": train_dev_graphs,
+        "dev": dev_graphs,
+        "test": test_graphs,
+    }
+
+
+# augmenting edges results in loss of learning ability
+# [Augment.add_all_edges(g) for g in tqdm(graphs)]
+
+
+def create_loader(generator, graphs, batch_size, shuffle):
+    train_batch = GraphBatch.from_networkx_list(
+        graphs, n_edge_feat=1, n_node_feat=generator.n_parts, n_glob_feat=1
+    )
+    target_batch = GraphBatch.from_networkx_list(
+        graphs, n_edge_feat=16, n_node_feat=1, n_glob_feat=1, feature_key="target"
+    )
+    train_list = train_batch.to_data_list()
+    target_list = target_batch.to_data_list()
+    if batch_size is None:
+        batch_size = len(train_list)
+    return GraphDataLoader(
+        list(zip(train_list, target_list)), batch_size=batch_size, shuffle=shuffle
+    )
