@@ -1,10 +1,13 @@
+import itertools
+from functools import partial
+from itertools import permutations
+from typing import Hashable
+from typing import List
+from typing import Tuple
+
 import networkx as nx
 import numpy as np
 import torch
-from itertools import permutations
-from functools import partial
-from typing import Tuple, Hashable, List
-import itertools
 
 
 def has_cycle(g: nx.DiGraph) -> bool:
@@ -36,7 +39,7 @@ def sigmoid(x, a, kd, n, offset, inv):
 #         return g
 
 
-class CircuitGenerator(object):
+class CircuitGenerator:
 
     functions = {"sigmoid": sigmoid}
 

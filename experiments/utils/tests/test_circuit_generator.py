@@ -1,9 +1,10 @@
-import pytest
-from experiments.utils.circuit_generator import CircuitGenerator
+import random
 
 import numpy as np
-import random
+import pytest
 import torch
+
+from experiments.utils.circuit_generator import CircuitGenerator
 
 
 @pytest.mark.parametrize("n", range(2, 30, 3))
