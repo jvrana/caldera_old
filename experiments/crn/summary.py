@@ -5,7 +5,7 @@ Methods for summaries and statistics
 import numpy as np
 import torch
 
-from pyrographnets.data import GraphDataLoader
+from caldera.data import GraphDataLoader
 
 
 def degree(graph_batch, i):
