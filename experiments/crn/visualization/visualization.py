@@ -1,9 +1,10 @@
+import networkx as nx
+import pandas as pd
 import seaborn as sns
 import torch
-import pandas as pd
 from pylab import plt
+
 from .graph_plotter import GraphPlotter
-import networkx as nx
 
 
 def plot_example_graphs(graphs, rows=4, cols=4, figsize=(10, 10)):

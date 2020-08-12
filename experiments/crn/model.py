@@ -1,23 +1,21 @@
 from typing import List
 
+import torch
 from torch import nn
 
-from pyrographnets.utils import pairwise
-from pyrographnets.data import GraphBatch
-from pyrographnets.models import GraphEncoder, GraphCore
-from pyrographnets.blocks import (
-    EdgeBlock,
-    NodeBlock,
-    GlobalBlock,
-    AggregatingEdgeBlock,
-    AggregatingGlobalBlock,
-    AggregatingNodeBlock,
-    Aggregator,
-)
+from pyrographnets.blocks import AggregatingEdgeBlock
+from pyrographnets.blocks import AggregatingGlobalBlock
+from pyrographnets.blocks import AggregatingNodeBlock
+from pyrographnets.blocks import Aggregator
+from pyrographnets.blocks import EdgeBlock
 from pyrographnets.blocks import Flex
+from pyrographnets.blocks import GlobalBlock
 from pyrographnets.blocks import MLP
-
-import torch
+from pyrographnets.blocks import NodeBlock
+from pyrographnets.data import GraphBatch
+from pyrographnets.models import GraphCore
+from pyrographnets.models import GraphEncoder
+from pyrographnets.utils import pairwise
 
 
 class MLPBlock(nn.Module):

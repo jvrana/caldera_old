@@ -1,10 +1,15 @@
+from functools import partial
+from itertools import permutations
+from typing import Hashable
+from typing import List
+from typing import Tuple
+
 import networkx as nx
 import numpy as np
 import torch
-from itertools import permutations
-from functools import partial
-from typing import Tuple, Hashable, List
-from pyrographnets.data import GraphBatch, GraphDataLoader
+
+from pyrographnets.data import GraphBatch
+from pyrographnets.data import GraphDataLoader
 
 
 def has_cycle(g: nx.DiGraph) -> bool:
@@ -38,7 +43,7 @@ def sigmoid(x, a, kd, n, offset, inv):
 # TODO: record data generation parameters
 # TODO: record actual parameters
 # TODO: record actual data
-class CircuitGenerator(object):
+class CircuitGenerator:
 
     functions = {"sigmoid": sigmoid}
 

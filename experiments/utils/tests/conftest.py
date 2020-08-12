@@ -1,7 +1,8 @@
 import random
+
 import numpy
-import torch
 import pytest
+import torch
 
 
 @pytest.fixture(autouse=True)

@@ -65,8 +65,7 @@ def plot(target_data, out):
 
 
 def train(**kwargs):
-    """
-    This is the documentation for the function.
+    """This is the documentation for the function.
 
     :param learning_rate:
     :return:
