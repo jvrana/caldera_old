@@ -1,11 +1,11 @@
-"""summary.py
+"""summary.py.
 
 Methods for summaries and statistics
 """
-
-import torch
-from pyrographnets.data import GraphDataLoader
 import numpy as np
+import torch
+
+from pyrographnets.data import GraphDataLoader
 
 
 def degree(graph_batch, i):

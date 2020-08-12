@@ -1,6 +1,7 @@
 import collections
-import numpy as np
+
 import networkx as nx
+import numpy as np
 import pylab as plt
 
 
@@ -19,7 +20,7 @@ def sorted_center(iterable, reverse=False, key=None, select=None):
     return centered
 
 
-class GraphPlotter(object):
+class GraphPlotter:
     def __init__(self, graph, ax=None, pos=None):
         if ax is None:
             ax = plt.figure(figsize=(3, 3)).gca()
@@ -79,7 +80,7 @@ class GraphPlotter(object):
 
     @staticmethod
     def _get_subgraphs(graph):
-        """Get independent subgraphs"""
+        """Get independent subgraphs."""
         node_list = list(graph.nodes)
         subgraphs = []
         while len(node_list) > 0:
