@@ -12,14 +12,14 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 import wandb
 import torch
-from pyrographnets.data import GraphBatch
+from caldera.data import GraphBatch
 from typing import Tuple
 from typing import Dict
 from data import generate_data, create_loader, CircuitGenerator
 from model import Network
 from summary import loader_summary
 from tqdm.auto import tqdm
-from pyrographnets.utils import _first
+from caldera.utils import _first
 import pylab as plt
 import pandas as pd
 import seaborn as sns

@@ -1,3 +1,3 @@
 # Experiments
 
-List of experiments with `pyrographnets`
+List of experiments with `caldera`

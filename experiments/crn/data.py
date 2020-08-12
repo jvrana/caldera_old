@@ -8,8 +8,8 @@ import networkx as nx
 import numpy as np
 import torch
 
-from pyrographnets.data import GraphBatch
-from pyrographnets.data import GraphDataLoader
+from caldera.data import GraphBatch
+from caldera.data import GraphDataLoader
 
 
 def has_cycle(g: nx.DiGraph) -> bool:
